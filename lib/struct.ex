@@ -118,16 +118,33 @@ defmodule Z.Struct do
   end
 
   defp check(result, :type, options, context) when not is_struct(result.value, context.type) do
-    message = Keyword.get(options, :message, "input is not a #{inspect(context.type)}")
+    if {:array, true} not in options do
+      message = Keyword.get(options, :message, "input is not a #{inspect(context.type)}")
 
-    result
-    |> Z.Result.add_issue(
-      Z.Issue.new(
-        Z.Error.Codes.invalid_type(),
-        message,
-        context
+      result
+      |> Z.Result.add_issue(
+        Z.Issue.new(
+          Z.Error.Codes.invalid_type(),
+          message,
+          context
+        )
       )
-    )
+    else
+      if {:array, true} in options and not is_list(result.value) do
+        message = Keyword.get(options, :message, "input is not an array of #{inspect(context.type)}")
+
+        result
+        |> Z.Result.add_issue(
+          Z.Issue.new(
+            Z.Error.Codes.invalid_type(),
+            message,
+            context
+          )
+        )
+      else
+        result
+      end
+    end
   end
 
   defp check(result, :type, _options, _context) do
