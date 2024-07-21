@@ -5,7 +5,7 @@ defmodule Z.Any do
 
   alias Z.{Result, Error, Issue}
 
-  use Z.Type, options: [:default, :required, :equals, :enum]
+  use Z.Type, options: [:default, :required, :equals, :enum, :array]
 
   def check(result, :conversions, rules, context) do
     result
